@@ -16,7 +16,7 @@ Stores data into the datastore of the bot.
 3. validate_entered_amount(amount_entered):
 Takes 1 argument, **amount_entered**. It validates this amount's format to see if it has been correctly entered by the user.
 
-4. getUserHistory(chat_id):
+4. getSpendUserHistory(chat_id):
 Takes 1 argument **chat_id** and uses this to get the relevant user's historical data.
 
 5. getSpendCategories():
