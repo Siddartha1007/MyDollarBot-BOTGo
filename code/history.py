@@ -6,7 +6,7 @@ def run(message, bot):
     try:
         helper.read_json()
         chat_id = message.chat.id
-        user_history = helper.getUserHistory(chat_id)
+        user_history = helper.getSpendUserHistory(chat_id)
         spend_total_str = ""
         # Amount for each month
         amount=0.0
