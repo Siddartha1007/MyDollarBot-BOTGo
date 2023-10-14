@@ -80,11 +80,10 @@ def post_category_selection(message, bot, operation):
 def category_add(message, bot, operation):
     chat_id = message.chat.id
     category_name = message.text
-
     category_file = "categoriesIncome.txt" if operation == 'income' else "categories.txt"
 
     with open(category_file, "r") as tf:
-        lines = tf.read().split(',')
+        lines = tf.read().split(',') 
         tf.close()
     f = open(category_file, "a")   
     if lines == ['']:
