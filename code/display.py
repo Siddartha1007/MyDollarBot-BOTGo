@@ -6,24 +6,27 @@ import logging
 from telebot import types
 from datetime import datetime
 
+total=""
+bud=""
 
 def run(message, bot):
     helper.read_json()
     chat_id = message.chat.id
     history = helper.getUserHistory(chat_id)
-    if history is None:
+    incomeHistory, spendHistory = history['incomeData'], history['data']
+    if incomeHistory is None:
+        bot.send_message(chat_id, "Sorry, there are no records of the earning!")
+    elif spendHistory is None:
         bot.send_message(chat_id, "Sorry, there are no records of the spending!")
     else:
-        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-        markup.row_width = 2
-        for mode in helper.getSpendDisplayOptions():
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, row_width=2)
+        for mode in helper.getDisplayOptions():
             markup.add(mode)
         # markup.add('Day', 'Month')
         msg = bot.reply_to(message, 'Please select a category to see details', reply_markup=markup)
         bot.register_next_step_handler(msg, display_total, bot)
 
-total=""
-bud=""
+
 def display_total(message, bot):
     global total
     global bud
@@ -31,18 +34,26 @@ def display_total(message, bot):
         chat_id = message.chat.id
         DayWeekMonth = message.text
 
-        if DayWeekMonth not in helper.getSpendDisplayOptions():
-            raise Exception("Sorry I can't show spendings for \"{}\"!".format(DayWeekMonth))
+        if DayWeekMonth not in helper.getDisplayOptions():
+            raise Exception("Sorry I can't show details for \"{}\"!".format(DayWeekMonth))
 
         history = helper.getUserHistory(chat_id)
-        if history is None:
+        incomeHistory, spendHistory = history['incomeData'], history['data']
+
+        if incomeHistory is None:
+            raise Exception("Oops! Looks like you do not have any earning records!")
+        elif spendHistory is None:
             raise Exception("Oops! Looks like you do not have any spending records!")
 
         bot.send_message(chat_id, "Hold on! Calculating...")
         # show the bot "typing" (max. 5 secs)
         bot.send_chat_action(chat_id, 'typing')
         time.sleep(0.5)
-        total_text = ""
+        # total_income_text = ""
+        # total_spend_text = ""
+        income_msg = ""
+        spend_msg = ""
+
         # get budget data
         budgetData = {}
         if helper.isOverallBudgetAvailable(chat_id):
@@ -53,23 +64,39 @@ def display_total(message, bot):
         if DayWeekMonth == 'Day':
             query = datetime.now().today().strftime(helper.getDateFormat())
             # query all that contains today's date
-            queryResult = [value for index, value in enumerate(history) if str(query) in value]
+            incomeQueryResult = [value for index, value in enumerate(incomeHistory) if str(query) in value]
+            spendQueryResult = [value for index, value in enumerate(spendHistory) if str(query) in value]
+
         elif DayWeekMonth == 'Month':
             query = datetime.now().today().strftime(helper.getMonthFormat())
             # query all that contains today's date
-            queryResult = [value for index, value in enumerate(history) if str(query) in value]
+            incomeQueryResult = [value for index, value in enumerate(incomeHistory) if str(query) in value]
+            spendQueryResult = [value for index, value in enumerate(spendHistory) if str(query) in value]
 
-        total_text = calculate_spendings(queryResult)
-        total=total_text
+
+        total_income_text = calculate_data(incomeQueryResult)
+        total_spend_text = calculate_data(spendQueryResult)
+
+        income_msg = create_message(total_income_text, "earnings", DayWeekMonth)
+        spend_msg = create_message(total_spend_text, "spendings", DayWeekMonth)
+
+
+        # if(len(total_income_text) == 0):
+        #     income_msg = "----------------------\nYou have no earnings for {}!".format(DayWeekMonth)
+        # else:
+        #     income_msg = "\n----------------------\nHere are your total earnings {}:\nCATEGORIES,AMOUNT \n----------------------\n{}".format(DayWeekMonth.lower(), total_income_text)
+        # if(len(total_spend_text) == 0):
+        #     spend_msg = "----------------------\nYou have no spendings for {}!".format(DayWeekMonth)
+        # else:
+        #     spend_msg = "\n----------------------\nHere are your total spendings {}:\nCATEGORIES,AMOUNT \n----------------------\n{}".format(DayWeekMonth.lower(), total_spend_text)
+        
+        total=total_spend_text
         bud=budgetData
-        spending_text = display_budget_by_text(history, budgetData)
-        if len(total_text) == 0:
-            spending_text += "----------------------\nYou have no spendings for {}!".format(DayWeekMonth)
-            bot.send_message(chat_id, spending_text)
-        else:
-            spending_text += "\n----------------------\nHere are your total spendings {}:\nCATEGORIES,AMOUNT \n----------------------\n{}".format(
-                DayWeekMonth.lower(), total_text)
-            bot.send_message(chat_id, spending_text)
+        spending_text = display_budget_by_text(spendHistory, budgetData)
+        spending_text = spending_text + income_msg + spend_msg
+        bot.send_message(chat_id, spending_text)
+
+        if (len(total_spend_text) != 0) :
             markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
             markup.row_width = 2
             for plot in helper.getplot():
@@ -77,6 +104,7 @@ def display_total(message, bot):
               # markup.add('Day', 'Month')
             msg = bot.reply_to(message, 'Please select a plot to see the total expense', reply_markup=markup)
             bot.register_next_step_handler(msg, plot_total, bot)
+
     except Exception as e:
         logging.exception(str(e))
         bot.reply_to(message, str(e))
@@ -97,7 +125,8 @@ def plot_total(message, bot):
        graphing.vis(total)
        bot.send_photo(chat_id, photo=open('pie.png', 'rb'))
        os.remove('pie.png')
-def calculate_spendings(queryResult):
+
+def calculate_data(queryResult):
     total_dict = {}
 
     for row in queryResult:
@@ -120,7 +149,7 @@ def display_budget_by_text(history, budget_data) -> str:
     query = datetime.now().today().strftime(helper.getMonthFormat())
     # query all expense history that contains today's date
     queryResult = [value for index, value in enumerate(history) if str(query) in value]
-    total_text = calculate_spendings(queryResult)
+    total_text = calculate_data(queryResult)
     budget_display = ""
     total_text_split = [line for line in total_text.split('\n') if line.strip() != '']
 
@@ -156,3 +185,9 @@ def display_budget_by_text(history, budget_data) -> str:
         for key in categ_remaining.keys():
             budget_display += key + ":" + str(categ_remaining[key]) + "\n"
     return budget_display
+
+
+def create_message(data, category, DayWeekMonth):
+    if not data:
+        return f"----------------------\nYou have no {category} for {DayWeekMonth}!"
+    return f"\n----------------------\nHere are your total {category} {DayWeekMonth.lower()}:\nCATEGORIES,AMOUNT \n----------------------\n{data}"
