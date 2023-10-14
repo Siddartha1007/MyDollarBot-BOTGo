@@ -44,7 +44,8 @@ def post_category_selection(message, bot, operation):
         options = helper.getCategoryOptions()
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
 
-        categories_list = helper.getIncomeCategories() if op == 'income' else helper.getSpendCategories()
+        categories_list = helper.getIncomeCategories() if operation == 'income' else helper.getSpendCategories()
+        print("categories_list",categories_list)
 
         # Handle the exception of unknown operation 
         if op not in options.values():
