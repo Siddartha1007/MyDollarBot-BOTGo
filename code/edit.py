@@ -7,7 +7,7 @@ def run(m, bot):
     chat_id = m.chat.id
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     markup.row_width = 2
-    for c in helper.getUserHistory(chat_id):
+    for c in helper.getSpendUserHistory(chat_id):
         expense_data = c.split(',')
         str_date = "Date=" + expense_data[0]
         str_category = ",\t\tCategory=" + expense_data[1]
@@ -57,7 +57,7 @@ def edit_date(m, bot, selected_data):
         bot.reply_to(m, "The date is incorrect")
         return
     chat_id = m.chat.id
-    data_edit = helper.getUserHistory(chat_id)
+    data_edit = helper.getSpendUserHistory(chat_id)
     for i in range(len(data_edit)):
         user_data = data_edit[i].split(',')
         selected_date = selected_data[0].split('=')[1]
@@ -75,7 +75,7 @@ def edit_date(m, bot, selected_data):
 def edit_cat(m, bot, selected_data):
     user_list = helper.read_json()
     chat_id = m.chat.id
-    data_edit = helper.getUserHistory(chat_id)
+    data_edit = helper.getSpendUserHistory(chat_id)
     new_cat = "" if m.text is None else m.text
     for i in range(len(data_edit)):
         user_data = data_edit[i].split(',')
@@ -95,7 +95,7 @@ def edit_cost(m, bot, selected_data):
     user_list = helper.read_json()
     new_cost = "" if m.text is None else m.text
     chat_id = m.chat.id
-    data_edit = helper.getUserHistory(chat_id)
+    data_edit = helper.getSpendUserHistory(chat_id)
 
     if helper.validate_entered_amount(new_cost) != 0:
         for i in range(len(data_edit)):
