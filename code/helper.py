@@ -25,6 +25,7 @@ budget_types = {
 
 data_format = {
     'data': [],
+    'incomeData': [],
     'budget': {
         'overall': None,
         'category': None
@@ -48,7 +49,6 @@ category_types = {
 commands = {
     'menu': 'Display this menu',
     'add': 'Record/Add a new spending',
-    'addincome': 'Record/Add a new income',
     'add_recurring': 'Add a new recurring expense for future months',
     'display': 'Show sum of expenditure for the current day/month',
     'estimate': 'Show an estimate of expenditure for the next day/month',
@@ -108,10 +108,16 @@ def validate_entered_duration(duration_entered):
     return 0
 
 
-def getUserHistory(chat_id):
+def getSpendUserHistory(chat_id):
     data = getUserData(chat_id)
     if data is not None:
         return data['data']
+    return None
+
+def getUserHistory(chat_id):
+    data = getUserData(chat_id)
+    if data is not None:
+        return data
     return None
 
 
@@ -195,7 +201,7 @@ def display_remaining_overall_budget(message, bot):
 
 def calculateRemainingOverallBudget(chat_id):
     budget = getOverallBudget(chat_id)
-    history = getUserHistory(chat_id)
+    history = getSpendUserHistory(chat_id)
     query = datetime.now().today().strftime(getMonthFormat())
     queryResult = [value for index, value in enumerate(history) if str(query) in value]
 
@@ -223,7 +229,7 @@ def display_remaining_category_budget(message, bot, cat):
 
 def calculateRemainingCategoryBudget(chat_id, cat):
     budget = getCategoryBudgetByCategory(chat_id, cat)
-    history = getUserHistory(chat_id)
+    history = getSpendUserHistory(chat_id)
     query = datetime.now().today().strftime(getMonthFormat())
     queryResult = [value for index, value in enumerate(history) if str(query) in value]
 
