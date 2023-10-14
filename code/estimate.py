@@ -7,7 +7,7 @@ from telebot import types
 def run(message, bot):
     helper.read_json()
     chat_id = message.chat.id
-    history = helper.getUserHistory(chat_id)
+    history = helper.getSpendUserHistory(chat_id)
     if history is None:
         bot.send_message(
             chat_id, "Oops! Looks like you do not have any spending records!")
@@ -33,7 +33,7 @@ def estimate_total(message, bot):
                 "Sorry I can't show an estimate for \"{}\"!".format(
                     DayWeekMonth))
 
-        history = helper.getUserHistory(chat_id)
+        history = helper.getSpendUserHistory(chat_id)
         if history is None:
             raise Exception(
                 "Oops! Looks like you do not have any spending records!")
