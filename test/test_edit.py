@@ -19,7 +19,7 @@ def test_run(mock_telebot, mocker):
     mc.reply_to.return_value = True
     mocker.patch.object(edit, 'helper')
     message = create_message("hello from test run!")
-    edit.helper.getUserHistory(message.chat.id).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
+    edit.helper.getSpendUserHistory(message.chat.id).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
     edit.run(message, mc)
     assert mc.reply_to.called
 
@@ -87,7 +87,7 @@ def test_edit_date(mock_telebot, mocker):
     mc.reply_to.return_value = True
     mocker.patch.object(edit, 'helper')
     edit.helper.read_json().return_value = MOCK_USER_DATA
-    edit.helper.getUserHistory(MOCK_CHAT_ID).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
+    edit.helper.getSpendUserHistory(MOCK_CHAT_ID).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
     message = create_message("hello from testing!")
     message.text = DUMMY_DATE
     message.chat.id = MOCK_CHAT_ID
@@ -102,7 +102,7 @@ def test_edit_category(mock_telebot, mocker):
     mc.reply_to.return_value = True
     mocker.patch.object(edit, 'helper')
     edit.helper.read_json().return_value = MOCK_USER_DATA
-    edit.helper.getUserHistory(MOCK_CHAT_ID).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
+    edit.helper.getSpendUserHistory(MOCK_CHAT_ID).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
     message = create_message("hello from testing!")
     message.chat.id = MOCK_CHAT_ID
     selected_data = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data'][0]
@@ -116,7 +116,7 @@ def test_edit_cost(mock_telebot, mocker):
     mc.reply_to.return_value = True
     mocker.patch.object(edit, 'helper')
     edit.helper.read_json().return_value = MOCK_USER_DATA
-    edit.helper.getUserHistory(MOCK_CHAT_ID).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
+    edit.helper.getSpendUserHistory(MOCK_CHAT_ID).return_value = MOCK_USER_DATA[str(MOCK_CHAT_ID)]['data']
     edit.helper.validate_entered_amount.return_value = 0
     message = create_message("hello from testing!")
     message.chat.id = MOCK_CHAT_ID

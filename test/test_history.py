@@ -30,7 +30,7 @@ def create_message(text):
 def test_run_with_data(mock_telebot, mocker):
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(history, 'helper')
-    history.helper.getUserHistory.return_value = MOCK_USER_DATA["2614394724848"]
+    history.helper.getSpendUserHistory.return_value = MOCK_USER_DATA["2614394724848"]
     MOCK_Message_data = create_message("Hello")
     mc = mock_telebot.return_value
     mc.send_message.return_value = True
@@ -42,7 +42,7 @@ def test_run_with_data(mock_telebot, mocker):
 def test_run_without_data(mock_telebot, mocker):
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(history, 'helper')
-    history.helper.getUserHistory.return_value = MOCK_USER_DATA["1574038305"]
+    history.helper.getSpendUserHistory.return_value = MOCK_USER_DATA["1574038305"]
     MOCK_Message_data = create_message("Hello")
     mc = mock_telebot.return_value
     mc.send_message.return_value = True
@@ -53,8 +53,8 @@ def test_run_without_data(mock_telebot, mocker):
 @patch('telebot.telebot')
 def test_run_with_None(mock_telebot, mocker):
     mocker.patch.object(history, 'helper')
-    history.helper.getUserHistory.return_value = None
-    print("Is it None?", history.helper.getUserHistory.return_value)
+    history.helper.getSpendUserHistory.return_value = None
+    print("Is it None?", history.helper.getSpendUserHistory.return_value)
     MOCK_Message_data = create_message("Hello")
     mc = mock_telebot.return_value
     mc.reply_to.return_value = True

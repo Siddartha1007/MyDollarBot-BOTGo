@@ -64,7 +64,7 @@ def test_spending_estimate_working(mock_telebot, mocker):
 
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(estimate, 'helper')
-    estimate.helper.getUserHistory.return_value = MOCK_USER_DATA["894127939"]
+    estimate.helper.getSpendUserHistory.return_value = MOCK_USER_DATA["894127939"]
     estimate.helper.getSpendEstimateOptions.return_value = [
         "Next day", "Next month"]
     estimate.helper.getDateFormat.return_value = '%d-%b-%Y'
@@ -82,7 +82,7 @@ def test_spending_estimate_month(mock_telebot, mocker):
 
     MOCK_USER_DATA = test_read_json()
     mocker.patch.object(estimate, 'helper')
-    estimate.helper.getUserHistory.return_value = MOCK_USER_DATA["894127939"]
+    estimate.helper.getSpendUserHistory.return_value = MOCK_USER_DATA["894127939"]
     estimate.helper.getSpendEstimateOptions.return_value = [
         "Next day", "Next month"]
     estimate.helper.getDateFormat.return_value = '%d-%b-%Y'
