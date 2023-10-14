@@ -5,7 +5,7 @@ from datetime import datetime
 
 choices = ['Date', 'Category', 'Cost']
 plot = ['Bar with budget', 'Pie','Bar without budget']
-spend_display_option = ['Day', 'Month']
+display_option = ['Day', 'Month']
 spend_estimate_option = ['Next day', 'Next month']
 update_options = {
     'continue': 'Continue',
@@ -37,10 +37,18 @@ category_options = {
     'view': 'Show Categories'
 }
 
+
+category_types = {
+    'income': 'income',
+    'spend': 'spend'
+}
+
+
 # set of implemented commands and their description
 commands = {
     'menu': 'Display this menu',
     'add': 'Record/Add a new spending',
+    'addincome': 'Record/Add a new income',
     'add_recurring': 'Add a new recurring expense for future months',
     'display': 'Show sum of expenditure for the current day/month',
     'estimate': 'Show an estimate of expenditure for the next day/month',
@@ -236,11 +244,17 @@ def getSpendCategories():
     with open("categories.txt", "r") as tf:
         spend_categories = tf.read().split(',')
     return spend_categories
+
+def getIncomeCategories():
+    with open("categoriesIncome.txt", "r") as tf:
+        income_categories = tf.read().split(',')
+    return income_categories
+
 def getplot():
     return plot
 
-def getSpendDisplayOptions():
-    return spend_display_option
+def getDisplayOptions():
+    return display_option
 
 
 def getSpendEstimateOptions():
@@ -281,3 +295,11 @@ def getUpdateOptions():
 
 def getCategoryOptions():
     return category_options
+
+
+def geCategoryTypes():
+    return category_types
+
+
+def getIncomeOptions():
+    return income_options
