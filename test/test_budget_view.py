@@ -1,7 +1,7 @@
 from code import budget_view
-import mock
-from mock import ANY
-from mock.mock import patch
+from unittest.mock import Mock
+from unittest.mock import ANY
+from unittest.mock import patch
 from telebot import types
 
 
@@ -36,7 +36,7 @@ def test_run_overall_budget(mock_telebot, mocker):
     mocker.patch.object(budget_view, 'helper')
     budget_view.helper.isOverallBudgetAvailable.return_value = True
 
-    budget_view.display_overall_budget = mock.Mock(return_value=True)
+    budget_view.display_overall_budget = Mock(return_value=True)
     message = create_message("hello from testing")
     budget_view.run(mc, message)
 
@@ -51,7 +51,7 @@ def test_run_category_budget(mock_telebot, mocker):
     budget_view.helper.isCategoryBudgetAvailable.return_value = True
     budget_view.helper.isOverallBudgetAvailable.return_value = False
 
-    budget_view.display_category_budget = mock.Mock(return_value=True)
+    budget_view.display_category_budget = Mock(return_value=True)
 
     message = create_message("hello from testing")
     budget_view.run(mc, message)
